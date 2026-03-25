@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Birthday Akram Mukasa</title>
+  <style>
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #0d1117, #161b22);
+      color: #c9d1d9;
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    canvas#confettiCanvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .terminal {
+      position: relative;
+      z-index: 1;
+      width: 92%;
+      max-width: 980px;
+      height: 82vh;
+      background: rgba(22, 27, 34, 0.96);
+      border: 1px solid #30363d;
+      border-radius: 14px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .terminal-header {
+      background: #21262d;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid #30363d;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .red { background: #ff5f56; }
+    .yellow { background: #ffbd2e; }
+    .green { background: #27c93f; }
+
+    .terminal-title {
+      margin-left: 10px;
+      font-size: 14px;
+      color: #8b949e;
+    }
+
+    .terminal-body {
+      flex: 1;
+      padding: 18px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      line-height: 1.55;
+    }
+
+    .banner {
+      color: #ffd166;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .input-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .prompt {
+      color: #58a6ff;
+      flex-shrink: 0;
+    }
+
+    input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #c9d1d9;
+      font: inherit;
+      width: 100%;
+    }
+
+    .output {
+      margin: 6px 0 12px 0;
+      color: #c9d1d9;
+    }
+
+    .success {
+      color: #3fb950;
+    }
+
+    .warning {
+      color: #d29922;
+    }
+
+    .error {
+      color: #f85149;
+    }
+
+    .muted {
+      color: #8b949e;
+    }
+
+    .accent {
+      color: #79c0ff;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="confettiCanvas"></canvas>
+
+  <div class="terminal">
+    <div class="terminal-header">
+      <div class="dot red"></div>
+      <div class="dot yellow"></div>
+      <div class="dot green"></div>
+      <div class="terminal-title">akram-birthday-terminal.sh</div>
+    </div>
+
+    <div class="terminal-body" id="terminalBody">
+      <div class="output banner">🎂 Happy Birthday, Akram Mukasa! 🎂</div>
+      <div class="output success">Welcome to BirthdayOS v2.0 - Akram Edition</div>
+      <div class="output">This system has detected one exceptional coding teacher.</div>
+      <div class="output muted">Type "help" to see available commands.</div>
+    </div>
+  </div>
+
+  <script>
+    const terminalBody = document.getElementById("terminalBody");
+
+    function createInputLine() {
+      const inputLine = document.createElement("div");
+      inputLine.className = "input-line";
+
+      const prompt = document.createElement("span");
+      prompt.className = "prompt";
+      prompt.textContent = "guest@akram-terminal:~$";
+
+      const input = document.createElement("input");
+      input.type = "text";
+      input.autocomplete = "off";
+      input.spellcheck = false;
+
+      inputLine.appendChild(prompt);
+      inputLine.appendChild(input);
+      terminalBody.appendChild(inputLine);
+
+      input.focus();
+      scrollToBottom();
+
+      input.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+          const command = input.value.trim();
+          input.disabled = true;
+          handleCommand(command);
+        }
+      });
+    }
+
+    function addOutput(text, className = "output") {
+      const div = document.createElement("div");
+      div.className = className;
+      div.textContent = text;
+      terminalBody.appendChild(div);
+      scrollToBottom();
+    }
+
+    function scrollToBottom() {
+      terminalBody.scrollTop = terminalBody.scrollHeight;
+    }
+
+    function triggerConfetti(duration = 2500) {
+      confettiPieces = [];
+      for (let i = 0; i < 180; i++) {
+        confettiPieces.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * -canvas.height,
+          w: 6 + Math.random() * 6,
+          h: 10 + Math.random() * 10,
+          color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
+          speed: 2 + Math.random() * 4,
+          tilt: Math.random() * 10 - 5,
+          drift: Math.random() * 2 - 1
+        });
+      }
+      confettiActive = true;
+      setTimeout(() => {
+        confettiActive = false;
+      }, duration);
+    }
+
+    function handleCommand(command) {
+      if (!command) {
+        addOutput("", "output");
+        createInputLine();
+        return;
+      }
+
+      switch (command) {
+        case "whoami":
+          addOutput("Akram Mukasa", "output success");
+          addOutput("Role: legendary coding teacher", "output accent");
+          addOutput("Status: calm under syntax pressure", "output muted");
+          break;
+
+        case "npm run celebrate":
+          addOutput("> birthday-app@2.0.0 celebrate", "output muted");
+          addOutput("> installing joy dependencies...", "output muted");
+          addOutput("🎉 Celebration compiled successfully.", "output success");
+          addOutput("🎂 Cake dependency installed.", "output success");
+          addOutput("✅ 0 errors, 0 warnings, maximum respect.", "output success");
+          triggerConfetti();
+          break;
+
+        case 'git commit -m "another year of excellence"':
+          addOutput("[main bday2026] another year of excellence", "output success");
+          addOutput(" Author: admiration-bot", "output");
+          addOutput(" 1 file changed, 365 insertions(+), 0 regressions", "output");
+          addOutput("Repository updated successfully.", "output success");
+          break;
+
+        case "sudo make-cake":
+          addOutput("[sudo] password for guest:", "output warning");
+          addOutput("Access granted by the Birthday Kernel.", "output success");
+          addOutput("Loading flour module...", "output");
+          addOutput("Loading chocolate plugin...", "output");
+          addOutput("Compiling frosting...", "output");
+          addOutput("🎂 Cake built successfully: akram_deluxe_edition.tar.gz", "output success");
+          triggerConfetti(1800);
+          break;
+
+        case "show achievements":
+          addOutput("🏆 Achievements unlocked:", "output success");
+          addOutput("- Explained recursion without panic", "output");
+          addOutput("- Survived beginner questions with dignity", "output");
+          addOutput("- Defeated 10,000 mysterious bugs", "output");
+          addOutput("- Reached Birthday Level: Expert", "output");
+          break;
+
+        case "debug students":
+          addOutput("Scanning student submissions...", "output");
+          addOutput("Found 14 missing semicolons, 3 infinite loops, and 1 variable called 'thing'.", "output warning");
+          addOutput("Recommendation: remain patient. Barely.", "output muted");
+          break;
+
+        case "print wisdom":
+          addOutput('"Read the error message. It is trying, unlike some people."', "output success");
+          break;
+
+        case "deploy cake":
+          addOutput("Deploying cake to production...", "output");
+          addOutput("Rollback not possible. Consumption imminent.", "output warning");
+          addOutput("🍰 Deployment successful.", "output success");
+          triggerConfetti(1500);
+          break;
+
+        case "status":
+          addOutput("System status: stable", "output success");
+          addOutput("Coffee: acceptable", "output");
+          addOutput("Mood: birthday-ready", "output");
+          addOutput("Teaching skill: dangerously high", "output accent");
+          break;
+
+        case "cat /dev/inspiration":
+          addOutput("Code with patience. Debug with courage. Teach with style.", "output success");
+          break;
+
+        case "git log":
+          addOutput("commit 2026-birthday", "output success");
+          addOutput("Author: The Universe", "output");
+          addOutput("Message: Added one more year of brilliance to Akram Mukasa.", "output");
+          break;
+
+        case "ls":
+          addOutput("cake.txt   wisdom.md   students.js   patience.py   birthday.sh", "output");
+          break;
+
+        case "fortune":
+          addOutput("Your next compile will succeed, but only after one suspicious typo.", "output success");
+          break;
+
+        case "matrix":
+          addOutput("01001000 01100001 01110000 01110000 01111001 00100000 01000010 01101001 01110010 01110100 01101000 01100100 01100001 01111001", "output accent");
+          addOutput("(translation: Happy Birthday)", "output muted");
+          break;
+
+        case "clear":
+          terminalBody.innerHTML = "";
+          createInputLine();
+          return;
+
+        case "help":
+          addOutput("Available commands:", "output success");
+          addOutput(" - whoami", "output");
+          addOutput(" - npm run celebrate", "output");
+          addOutput(' - git commit -m "another year of excellence"', "output");
+          addOutput(" - sudo make-cake", "output");
+          addOutput(" - show achievements", "output");
+          addOutput(" - debug students", "output");
+          addOutput(" - print wisdom", "output");
+          addOutput(" - deploy cake", "output");
+          addOutput(" - status", "output");
+          addOutput(" - cat /dev/inspiration", "output");
+          addOutput(" - git log", "output");
+          addOutput(" - ls", "output");
+          addOutput(" - fortune", "output");
+          addOutput(" - matrix", "output");
+          addOutput(" - clear", "output");
+          break;
+
+        default:
+          addOutput(`Command not found: ${command}`, "output error");
+          addOutput('Type "help" to see available commands.', "output muted");
+      }
+
+      createInputLine();
+    }
+
+    // Confetti
+    const canvas = document.getElementById("confettiCanvas");
+    const ctx = canvas.getContext("2d");
+    let confettiPieces = [];
+    let confettiActive = false;
+    const confettiColors = ["#ff5f56", "#ffbd2e", "#27c93f", "#58a6ff", "#d2a8ff", "#ffd166"];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    function drawConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      if (confettiActive || confettiPieces.length > 0) {
+        confettiPieces.forEach((p, index) => {
+          p.y += p.speed;
+          p.x += p.drift;
+          p.tilt += 0.1;
+
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.tilt);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(0, 0, p.w, p.h);
+          ctx.restore();
+
+          if (p.y > canvas.height + 20) {
+            confettiPieces.splice(index, 1);
+          }
+        });
+      }
+
+      requestAnimationFrame(drawConfetti);
+    }
+
+    drawConfetti();
+
+    // Start with a little confetti on load
+    triggerConfetti(2200);
+
+    createInputLine();
+  </script>
+</body>
+</html>
